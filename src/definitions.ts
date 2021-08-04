@@ -11,7 +11,7 @@ export interface IUserRequest {
  * 真正发送请求的数据格式
  */
 export interface IRequest extends IUserRequest {
-  requestId?: number; // 如果 mode 为 sync 则不用该字段
+  requestId: number;
 }
 
 /**

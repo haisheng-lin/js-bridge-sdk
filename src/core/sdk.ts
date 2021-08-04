@@ -115,7 +115,7 @@ class SDK {
 
   private dispatchSyncRequest(config: ISDKRequsetConfig) {
     return new Promise<undefined>((resolve) => {
-      this.jsBridge.postMessageToNative(config.params);
+      this.jsBridge.invoke(config.params);
       resolve(undefined);
     });
   }

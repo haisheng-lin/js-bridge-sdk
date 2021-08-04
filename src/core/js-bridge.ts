@@ -23,10 +23,12 @@ class JSBridge {
   /**
    * 触发 web 向 native 发送消息
    */
-  invoke<T = any>(data: IUserRequest, callback: (data: IResponse<T>) => void) {
+  invoke<T = any>(data: IUserRequest, callback?: (data: IResponse<T>) => void) {
     this.requestId++;
-    this.requestCallbacks[this.requestId] = callback;
-    this.postMessageToNative({ ...data, requestId: this.requestId });
+    if (data.mode === 'async') {
+      this.requestCallbacks[this.requestId] = callback;
+    }
+    this.nativeBridge.postMessage({ ...data, requestId: this.requestId });
   }
 
   /**
@@ -64,13 +66,6 @@ class JSBridge {
   }
 
   /**
-   * 向 native 端发送消息
-   */
-  postMessageToNative<T = any>(data: IRequest | IResponse<T>) {
-    this.nativeBridge?.postMessage(data);
-  }
-
-  /**
    * 处理 native 端请求
    */
   private processRequest(request: IRequest) {
@@ -78,7 +73,7 @@ class JSBridge {
     const callbacks = this.registeredCallbacks[action];
 
     if (!callbacks || !callbacks.length) {
-      this.postMessageToNative({
+      this.nativeBridge.postMessage({
         responseId: requestId,
         status: 'error',
         message: `no callback is registered for action: ${action}`,
@@ -89,13 +84,13 @@ class JSBridge {
     callbacks.forEach(async (callback) => {
       try {
         const responseData = await callback(request);
-        this.postMessageToNative({
+        this.nativeBridge.postMessage({
           responseId: requestId,
           status: 'success',
           data: responseData,
         });
       } catch (error) {
-        this.postMessageToNative({
+        this.nativeBridge.postMessage({
           responseId: requestId,
           status: 'error',
           data: error,
