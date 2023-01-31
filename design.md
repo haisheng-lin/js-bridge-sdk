@@ -14,7 +14,7 @@ Web 主要由 HTML、CSS、JavaScript 组成，Web 可以更好的实现发布�
 
 ## JSBridgeSDK 设计
 
-[![bridge-overview.png](https://kbook.wps.cn/uploads/images/gallery/2021-07/scaled-1680-/wlhrHztk3broZ6Ov-bridge-overview.png)](https://kbook.wps.cn/uploads/images/gallery/2021-07/wlhrHztk3broZ6Ov-bridge-overview.png)
+![bridge-overview.png](https://cdn.nlark.com/yuque/0/2023/png/328459/1675131047185-4f59ebb5-3208-4581-a380-7e058419f6b8.png)
 
 ### Bridge
 
@@ -27,7 +27,7 @@ Bridge 是双方底层通信的桥梁，相当于用于网络通信的 XMLHttpRe
 
 Bridge 最基本功能是提供客户端与 WebView 之间的通信桥梁。通信可分为同步通信与异步通信，同步通信在发送消息给对方后无需得到响应，而异步通信相反，类比 TCP 与 UDP。对于异步通信，包括了请求与响应两步，我们应当如何关联起这两者？答案是通信 id。发送请求与响应时都应带上请求 id 与响应 id，只有它们一样，才能关联起两者，并且每次通信时的请求 id 与响应 id 都是唯一的。
 
-[![bridge-connection.png](https://kbook.wps.cn/uploads/images/gallery/2021-07/scaled-1680-/2QyTnnk8Y9IVe3v1-bridge-connection.png)](https://kbook.wps.cn/uploads/images/gallery/2021-07/2QyTnnk8Y9IVe3v1-bridge-connection.png)
+![bridge-connection.png](https://cdn.nlark.com/yuque/__puml/cef55d87dbe22908d20e849c74cf3674.svg)
 
 方案设计：NativeBridge 与 JSBridge 均提供 `postMessage` 方法，用于发送消息。
 
@@ -75,7 +75,7 @@ Bridge 最基本功能是提供客户端与 WebView 之间的通信桥梁。通�
 
 客户端可通过 Bridge 注册事件与回调，注册后往 WebView 派发该事件，该事件对应的回调队列会一一执行并将结果返回。后面我们称事件为 **action**。
 
-[![bridge-action.png](https://kbook.wps.cn/uploads/images/gallery/2021-07/scaled-1680-/N6po38rtVw3hdpMS-bridge-action.png)](https://kbook.wps.cn/uploads/images/gallery/2021-07/N6po38rtVw3hdpMS-bridge-action.png)
+![bridge-action.png](https://cdn.nlark.com/yuque/__puml/5cbd21ac90ffca71b5276b1a305f8216.svg)
 
 方案设计：JSBridge 应维护一个 action 与任务队列映射的数据结构，每注册一个 action 回调时，都将回调添加到 action 对应的任务队列中。实现 `register` 与 `unregister` 方法。它们的入参如下:
 
@@ -294,3 +294,7 @@ sdk.request({
 #### 总结
 
 总的来说，该 SDK 提供的接口格式及参数等都跟 axios 相差不大，虽然底层的通信方案与之不同，但面向上层则抹平了这层差异，提供统一的调用方式，降低接入学习成本。
+
+## 资料
+
+摘自：https://www.yuque.com/haishenglin/avkfhs/ilangmng7flxyvwy
